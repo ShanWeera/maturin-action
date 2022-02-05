@@ -248,11 +248,6 @@ async function dockerBuild(tag: string, args: string[]): Promise<number> {
     '#!/bin/bash',
     // Stop on first error
     'set -e',
-    // Install Clang
-    'echo "::group::Install Clang"',
-    'yum install -y clang',
-    'clang --version',
-    'echo "::endgroup::"',
     // Install Rust
     'echo "::group::Install Rust"',
     `which rustup > /dev/null || curl --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain ${rustToolchain}`,
@@ -267,10 +262,25 @@ async function dockerBuild(tag: string, args: string[]): Promise<number> {
     'maturin --version',
     'echo "::endgroup::"'
   ]
+
   if (target.length > 0) {
     commands.push(
       'echo "::group::Install Rust target"',
       `if [[ ! -d $(rustc --print target-libdir --target ${target}) ]]; then rustup target add ${target}; fi`,
+      'echo "::endgroup::"'
+    )
+  }
+
+  if (manylinux == '2_24') {
+    commands.push(
+      'echo "::group::Install Clang 3.9"',
+      'apt-get update && apt-get upgrade -y',
+      'apt-get install -y software-properties-common apt-transport-https wget',
+      'wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -',
+      'apt-add-repository "deb https://apt.llvm.org/xenial/ llvm-toolchain-xenial-3.9 main"',
+      'apt-get update',
+      'apt-get install -y clang-3.9 lldb-3.9',
+      'export LIBCLANG_PATH=/usr/lib/llvm-3.9/lib/',
       'echo "::endgroup::"'
     )
   }
