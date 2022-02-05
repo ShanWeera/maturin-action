@@ -8170,6 +8170,10 @@ async function dockerBuild(tag, args) {
     const commands = [
         '#!/bin/bash',
         'set -e',
+        'echo "::group::Install Clang"',
+        'yum install -y clang',
+        'clang --version',
+        'echo "::endgroup::"',
         'echo "::group::Install Rust"',
         `which rustup > /dev/null || curl --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain ${rustToolchain}`,
         'export PATH="$HOME/.cargo/bin:$PATH"',

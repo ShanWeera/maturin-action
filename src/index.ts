@@ -251,8 +251,6 @@ async function dockerBuild(tag: string, args: string[]): Promise<number> {
     // Install Clang
     'echo "::group::Install Clang"',
     'yum install -y clang',
-    'export LIBCLANG_PATH=/usr/lib64/llvm',
-    'printenv',
     'clang --version',
     'echo "::endgroup::"',
     // Install Rust
