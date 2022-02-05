@@ -4,8 +4,7 @@ baseurl=https://copr-be.cloud.fedoraproject.org/results/alonid/llvm-3.9.0/epel-7
 type=rpm-md
 skip_if_unavailable=True
 gpgcheck=1
-gpgkey=https://copr-be.cloud.fedoraproject.org/results/alonid/llvm-
-3.9.0/pubkey.gpg
+gpgkey=https://copr-be.cloud.fedoraproject.org/results/alonid/llvm-3.9.0/pubkey.gpg
 repo_gpgcheck=0
 enabled=1
 enabled_metadata=1
