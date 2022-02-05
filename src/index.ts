@@ -248,6 +248,8 @@ async function dockerBuild(tag: string, args: string[]): Promise<number> {
     '#!/bin/bash',
     // Stop on first error
     'set -e',
+    // Install Clang
+    'yum install -y clang',
     // Install Rust
     'echo "::group::Install Rust"',
     `which rustup > /dev/null || curl --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain ${rustToolchain}`,
