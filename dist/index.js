@@ -7978,7 +7978,8 @@ const DEFAULT_CONTAINERS = {
         '2_12': 'quay.io/pypa/manylinux2010_x86_64:latest',
         '2014': 'quay.io/pypa/manylinux2014_x86_64:latest',
         '2_17': 'quay.io/pypa/manylinux2014_x86_64:latest',
-        '2_24': 'quay.io/pypa/manylinux_2_24_x86_64:latest'
+        '2_24': 'quay.io/pypa/manylinux_2_24_x86_64:latest',
+        '2_28': 'quay.io/pypa/manylinux_2_28_x86_64:latest'
     },
     'x86_64-unknown-linux-musl': {
         auto: 'messense/rust-musl-cross:x86_64-musl',
@@ -7990,7 +7991,8 @@ const DEFAULT_CONTAINERS = {
         '2_12': 'quay.io/pypa/manylinux2010_i686:latest',
         '2014': 'quay.io/pypa/manylinux2014_i686:latest',
         '2_17': 'quay.io/pypa/manylinux2014_i686:latest',
-        '2_24': 'quay.io/pypa/manylinux_2_24_i686:latest'
+        '2_24': 'quay.io/pypa/manylinux_2_24_i686:latest',
+        '2_28': 'quay.io/pypa/manylinux_2_28_i686:latest'
     },
     'i686-unknown-linux-musl': {
         auto: 'messense/rust-musl-cross:i686-musl',
@@ -8000,7 +8002,8 @@ const DEFAULT_CONTAINERS = {
         auto: 'messense/manylinux2014-cross:aarch64',
         '2014': 'messense/manylinux2014-cross:aarch64',
         '2_17': 'messense/manylinux2014-cross:aarch64',
-        '2_24': 'messense/manylinux_2_24-cross:aarch64'
+        '2_24': 'messense/manylinux_2_24-cross:aarch64',
+        '2_28': 'messense/manylinux_2_28-cross:aarch64'
     },
     'aarch64-unknown-linux-musl': {
         auto: 'messense/rust-musl-cross:aarch64-musl',
@@ -8010,7 +8013,8 @@ const DEFAULT_CONTAINERS = {
         auto: 'messense/manylinux2014-cross:armv7',
         '2014': 'messense/manylinux2014-cross:armv7',
         '2_17': 'messense/manylinux2014-cross:armv7',
-        '2_24': 'messense/manylinux_2_24-cross:armv7'
+        '2_24': 'messense/manylinux_2_24-cross:armv7',
+        '2_28': 'messense/manylinux_2_28-cross:armv7'
     },
     'armv7-unknown-linux-musleabihf': {
         auto: 'messense/rust-musl-cross:armv7-musleabihf',
@@ -8025,7 +8029,8 @@ const DEFAULT_CONTAINERS = {
         auto: 'messense/manylinux2014-cross:ppc64le',
         '2014': 'messense/manylinux2014-cross:ppc64le',
         '2_17': 'messense/manylinux2014-cross:ppc64le',
-        '2_24': 'messense/manylinux_2_24-cross:ppc64le'
+        '2_24': 'messense/manylinux_2_24-cross:ppc64le',
+        '2_28': 'messense/manylinux_2_28-cross:ppc64le'
     },
     'powerpc64le-unknown-linux-musl': {
         auto: 'messense/rust-musl-cross:powerpc64le-musl',
@@ -8035,7 +8040,8 @@ const DEFAULT_CONTAINERS = {
         auto: 'messense/manylinux2014-cross:s390x',
         '2014': 'messense/manylinux2014-cross:s390x',
         '2_17': 'messense/manylinux2014-cross:s390x',
-        '2_24': 'messense/manylinux_2_24-cross:s390x'
+        '2_24': 'messense/manylinux_2_24-cross:s390x',
+        '2_28': 'messense/manylinux_2_28-cross:s390x'
     }
 };
 const DEFAULT_CONTAINER = DEFAULT_CONTAINERS[DEFAULT_TARGET[process.arch]];
@@ -8185,6 +8191,9 @@ async function dockerBuild(tag, args) {
         commands.push('echo "::group::Install Rust target"', `if [[ ! -d $(rustc --print target-libdir --target ${target}) ]]; then rustup target add ${target}; fi`, 'echo "::endgroup::"');
     }
     if (manylinux == '2_24') {
+        commands.push('echo "::group::Install Clang 3.9"', 'apt-get update && apt-get upgrade -y', 'apt-get install -y software-properties-common apt-transport-https wget', 'wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -', 'apt-add-repository "deb https://apt.llvm.org/xenial/ llvm-toolchain-xenial-3.9 main"', 'apt-get update', 'apt-get install -y clang-3.9 lldb-3.9', 'export LIBCLANG_PATH=/usr/lib/llvm-3.9/lib/', 'echo "::endgroup::"');
+    }
+    if (manylinux == '2_28') {
         commands.push('echo "::group::Install Clang 3.9"', 'apt-get update && apt-get upgrade -y', 'apt-get install -y software-properties-common apt-transport-https wget', 'wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -', 'apt-add-repository "deb https://apt.llvm.org/xenial/ llvm-toolchain-xenial-3.9 main"', 'apt-get update', 'apt-get install -y clang-3.9 lldb-3.9', 'export LIBCLANG_PATH=/usr/lib/llvm-3.9/lib/', 'echo "::endgroup::"');
     }
     commands.push(`maturin ${args.join(' ')}`);
